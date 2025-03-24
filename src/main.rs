@@ -1,12 +1,27 @@
+use std::env;
+use std::fs::File;
+use std::io::{self, Read};
+
 use bfrun::interpreter::*;
 use bfrun::parser::*;
 
-const CODE: &str = "
-++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.
-";
+fn main() -> io::Result<()> {
+    let args: Vec<String> = env::args().collect();
 
-fn main() {
-    let code = parse(CODE);
+    if args.len() < 2 {
+        eprintln!("Usage: bfrun <path_to_file>");
+        std::process::exit(1);
+    }
 
-    run(8, &code);
+    let file_path = &args[1];
+
+    let mut file = File::open(file_path)?;
+
+    let mut code = String::new();
+    file.read_to_string(&mut code)?;
+
+    let code = parse(&code);
+    run(30000, &code);
+
+    Ok(())
 }
